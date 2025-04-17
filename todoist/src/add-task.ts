@@ -13,7 +13,7 @@ async function addTask(data: any) {
 async function main() {
   try {
     const commandLineArgs = argv.slice(2);
-    const content = commandLineArgs.join(' ');
+    const content = "ABCABC " + commandLineArgs.join(' ') + " " + new Date().toISOString();
     const response = await addTask({content, labels: ["cli"]});
     console.log ("TASK ADDED: ", response);
   }

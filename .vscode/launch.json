@@ -1,0 +1,27 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Launch Hello Todoist",
+      "program": "${workspaceFolder}/todoist/src/hello.ts",
+      "runtimeArgs": ["-r", "ts-node/register"],
+      "cwd": "${workspaceFolder}",
+      "console": "integratedTerminal"
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Add Task CLI",
+      "program": "${workspaceFolder}/todoist/src/add-task.ts",
+      "runtimeArgs": ["-r", "ts-node/register"],
+      "env": {
+        "TOKEN": "your_api_token_here" // Replace with a valid token for testing
+      },
+      "args": ["Buy groceries", "from CLI"], // Example task content
+      "cwd": "${workspaceFolder}",
+      "console": "integratedTerminal"
+    }
+  ]
+}
