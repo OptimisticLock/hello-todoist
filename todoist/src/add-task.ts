@@ -14,7 +14,7 @@ async function main() {
   try {
     const commandLineArgs = argv.slice(2);
     const content = commandLineArgs.join(' ');
-    const response = await addTask({content});
+    const response = await addTask({content, labels: ["cli"]});
     console.log ("TASK ADDED: ", response);
   }
   catch (error) {

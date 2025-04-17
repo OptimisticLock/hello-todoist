@@ -9,8 +9,8 @@ const apiToken = process.env.TOKEN;
 const fetchTasks = async () => {
   try {
 
-    const updateTaskResult = await updateTask('4629630727', {"content": "Buy Coffee " + new Date(), labels: ["api123"]});
-    console.log("Task updated: " + updateTaskResult);
+ //   const updateTaskResult = await updateTask('4629630727', {"content": "Buy Coffee " + new Date(), labels: ["api123"]});
+ //   console.log("Task updated: " + updateTaskResult);
     const url = 'https://api.todoist.com/rest/v2/tasks';
     console.log("Fetching Tasks from todoist.com");
     const response = await axios.get(url, { headers: {Authorization: `Bearer ${apiToken}`} });
