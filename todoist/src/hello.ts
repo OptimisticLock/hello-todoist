@@ -25,7 +25,6 @@ const fetchTasks = async () => {
 };
 
 const updateTask = async (id: string, data: any) => {
- // id = '4629630727';
   const url = 'https://api.todoist.com/rest/v2/tasks/' + id;
   const config = {headers: {Authorization: `Bearer ${apiToken}`} };
   const response = await axios.post(url, data, config);
@@ -39,7 +38,7 @@ async function processTasks(tasks: any) {
     console.log("Task: ", task);
     const id = task.id;
     const dueString = task?.due?.string;
-    const dueLabel = task?.due?.string?.replaceAll(" ", "-")?.replace("every", "ev-");
+    const dueLabel = task?.due?.string?.replaceAll(" ", "-"); // ?.replace("every", "every-");
    // const was = {...task};
     const labels = [... task.labels, "api123"];
 
@@ -55,8 +54,8 @@ async function processTasks(tasks: any) {
   const jsonString = JSON.stringify(tasks, null, 4);
  // console.log('Tasks:', response.data);
   // console.log("String: ", jsonString);
-  await fs.writeFile('todoist-tasks.json', jsonString);
-  console.log('Tasks have been saved to todoist-tasks.json');
+  await fs.writeFile('ignoreMe/todoist-tasks.json', jsonString);
+  console.log('Tasks have been saved to ignoreMe/todoist-tasks.json');
 
 }
 
