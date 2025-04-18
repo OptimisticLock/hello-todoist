@@ -12,7 +12,7 @@ const fetchTasks = async () => {
  //   const updateTaskResult = await updateTask('4629630727', {"content": "Buy Coffee " + new Date(), labels: ["api123"]});
  //   console.log("Task updated: " + updateTaskResult);
     //const url = 'https://api.todoist.com/rest/v2/tasks';
-    const url = 'https://todoist.com/api/v1/tasks';
+    const url = 'https://todoist.com/api/v1/tasks?limit=30';
     console.log("Fetching Tasks from todoist.com");
     const response = await axios.get(url, { headers: {Authorization: `Bearer ${apiToken}`} });
     console.log("Got tasks from todoist.com");
@@ -21,6 +21,7 @@ const fetchTasks = async () => {
     console.log("Done");
 
   } catch (error) {
+    console.error('###### Error!!! ######');
     console.error('Error fetching tasks:', error);
   }
 };

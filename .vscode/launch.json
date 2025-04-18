@@ -23,6 +23,15 @@
       "args": ["Buy groceries", "from CLI"], // Example task content
       "cwd": "${workspaceFolder}",
       "console": "integratedTerminal"
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "npm update-tasks",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "update-tasks"],
+      "cwd": "${workspaceFolder}",
+      "console": "integratedTerminal"
     }
   ]
 }
