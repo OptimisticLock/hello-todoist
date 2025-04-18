@@ -4,7 +4,8 @@ import { argv } from 'process';
 const apiToken = process.env.TOKEN;
 
 async function addTask(data: any) {
-  const url = 'https://api.todoist.com/rest/v2/tasks';
+//  const url = 'https://api.todoist.com/rest/v2/tasks';
+  const url = https://todoist.com/api/v1/tasks
   const config = {headers: {Authorization: `Bearer ${apiToken}`}};
   const response = await axios.post(url, data, config);
   return response;

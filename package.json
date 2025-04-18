@@ -14,7 +14,7 @@
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "todoist": "ts-node todoist/src/hello.ts",
+    "update-tasks": "ts-node todoist/src/update-tasks.ts",
     "add-task": "ts-node todoist/src/add-task.ts",
     "evernote": "ts-node evernote/evernote.ts"
   },
