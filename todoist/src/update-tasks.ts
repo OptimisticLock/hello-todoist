@@ -4,6 +4,8 @@ import axios from 'axios';
 const fs = require('fs').promises;
 
 console.log("Hello!");
+console.time("Total Execution Time");
+
 const apiToken = process.env.TOKEN;
 let totalCount = 0;
 
@@ -34,10 +36,12 @@ const fetchTasks = async () => {
     //const url = 'https://api.todoist.com/rest/v2/tasks';
 
     console.log("Done");
+    console.timeEnd("Total Execution Time");
 
   } catch (error) {
     console.error('###### Error!!! ######');
     console.error('Error fetching tasks:', error);
+    console.timeEnd("Total Execution Time");
   }
 };
 
@@ -71,7 +75,7 @@ async function processTasks(tasks: any) {
 
   //  if (labels.length !== newLabels.length) {
       const result = await updateTask(task.id, {labels: newLabels});
-      console.log("~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Task modified:", task.content, "now: ", result);
+      console.log("~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Task modified:", task.content); //, "now: ", result);
  //   }
   }
 
