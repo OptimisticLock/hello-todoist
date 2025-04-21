@@ -61,11 +61,11 @@ async function processTasks(tasks: any) {
     console.log(`Task: ${count++}: ${task.content}`);
     const id = task.id;
     const dueString = task?.due?.string;
-    const dueLabel = task?.due?.string?.replaceAll(" ", "-"); // ?.replace("every", "every-");
+    const dueLabel = task?.due?.string?.replaceAll(" ", "-").replace("every-1-", "every-"); // ?.replace("every", "every-");
    // const was = {...task};
     const labels = [... task.labels, "api_v1_take2"];
-    const newLabels = labels;
- //   const newLabels = labels.filter(label => !label.startsWith("every-"));
+ //   const newLabels = labels;
+    const newLabels = labels.filter(label => !label.startsWith("every-"));
 
     if (dueLabel)
       newLabels.push(dueLabel);

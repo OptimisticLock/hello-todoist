@@ -27,9 +27,18 @@
     {
       "type": "node",
       "request": "launch",
-      "name": "npm update-tasks",
+      "name": "npm update-tasks!",
       "runtimeExecutable": "npm",
       "runtimeArgs": ["run", "update-tasks"],
+      "cwd": "${workspaceFolder}",
+      "console": "integratedTerminal"
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "npm sync!",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "sync"],
       "cwd": "${workspaceFolder}",
       "console": "integratedTerminal"
     }
