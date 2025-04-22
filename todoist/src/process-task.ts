@@ -3,8 +3,8 @@ function toDueLabel(dueString: string) {
     return dueString
         ?.replaceAll(" ", "-")
         ?.replace("every-1-", "every-")
-        ?.replace("day", "day🌞")
-        ?.replace("month", "month🌒") 
+        ?.replace(/every-day.*/, "every-day🌞")
+        ?.replace(/every-month.*/, "every-month🌗") 
 }
     
 export function processTask(task: any) {

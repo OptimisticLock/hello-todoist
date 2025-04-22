@@ -1,8 +1,8 @@
 // import {json} from "node:stream/consumers";
 import 'dotenv/config';
 import axios from 'axios';
-import { processTask } from './process-task';
-const fs = require('fs').promises;
+import { processTask } from './process-task.js';
+import { promises as fs } from 'fs';
 
 console.log("Hello!");
 console.time("Total Execution Time");
@@ -10,18 +10,17 @@ console.time("Total Execution Time");
 const apiToken = process.env.TOKEN;
 let totalCount = 0;
 
-const fetchTasks = async () => {
+const fetchTasks = async (url: string) => {
   try {
     let count = 0;
-    console.log("Fetching Tasks from todoist.com");
-    let url = 'https://todoist.com/api/v1/tasks';
+    console.log("Fetching Tasks from ", url);
     while (true) {
       const response = await axios.get(url, { headers: {Authorization: `Bearer ${apiToken}`} });
-      const resultsLength = response.data.results.length;
-      totalCount += resultsLength;
-      console.log(`Got ${resultsLength} tasks from todoist.com. Total: ${totalCount}`);
+      const tasks = response.data.results || response.data.items;
+      totalCount += tasks.length;
+      console.log(`Got ${tasks.length} tasks from todoist.com. Total: ${totalCount}`);
      
-      const tasks = response.data.results;
+
 
       for (const task of tasks) {
             const taskChanges = processTask(task);
@@ -76,5 +75,12 @@ const updateTask = async (id: string, data: any) => {
   return response;
 }
 
+const activeURL = 'https://todoist.com/api/v1/tasks';
+console.log("############################################ Fetching active tasks");
+await fetchTasks(activeURL);
 
-fetchTasks();
+const completedURL = 'https://todoist.com/api/v1/tasks/completed'
+console.log("############################################### Fetching completed tasks");
+await fetchTasks(completedURL);
+
+
