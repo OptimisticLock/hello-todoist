@@ -25,8 +25,12 @@ const fetchTasks = async () => {
 
       for (const task of tasks) {
             const taskChanges = processTask(task);
-            console.log(`Task: ${count++}: ${JSON.stringify(taskChanges)}`);
-            const result = await updateTask(task.id, taskChanges);
+            if (Object.keys(taskChanges).length > 0) {
+              console.log("~~~~~~~Task modified:", task.content, taskChanges);
+              const taskChanges2 = processTask(task); //fixme
+              const result = await updateTask(task.id, taskChanges);
+
+            }
       }
       console.log("Processed response from todoist");
       let cursor = response.data.next_cursor;
@@ -64,7 +68,8 @@ const fetchTasks = async () => {
 //   console.log('Tasks have been saved to ignoreMe/todoist-tasks.json');
 
 const updateTask = async (id: string, data: any) => {
-  const url = 'https://api.todoist.com/rest/v2/tasks/' + id;  // TODO update to the new API
+  //const url = 'https://api.todoist.com/rest/v2/tasks/' + id;  // TODO update to the new API
+  const url = 'https://todoist.com/api/v1/tasks/' + id;  
   const config = {headers: {Authorization: `Bearer ${apiToken}`} };
   const response = await axios.post(url, data, config);
   return response;
