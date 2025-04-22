@@ -27,6 +27,7 @@ const fetchTasks = async () => {
             const taskChanges = processTask(task);
             if (Object.keys(taskChanges).length > 0) {
               console.log("~~~~~~~Task modified:", task.content, taskChanges);
+              console.log("~~~~~~~Was:          ", {content: task.content, labels: task.labels});  
               const taskChanges2 = processTask(task); //fixme
               const result = await updateTask(task.id, taskChanges);
 
