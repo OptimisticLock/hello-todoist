@@ -1,6 +1,7 @@
 // import {json} from "node:stream/consumers";
 import 'dotenv/config';
 import axios from 'axios';
+import { processTask } from './process-task';
 const fs = require('fs').promises;
 
 console.log("Hello!");
@@ -11,14 +12,22 @@ let totalCount = 0;
 
 const fetchTasks = async () => {
   try {
+    let count = 0;
     console.log("Fetching Tasks from todoist.com");
     let url = 'https://todoist.com/api/v1/tasks';
     while (true) {
       const response = await axios.get(url, { headers: {Authorization: `Bearer ${apiToken}`} });
-      const count = response.data.results.length;
-      totalCount += count;
-      console.log(`Got ${count} tasks from todoist.com. Total: ${totalCount}`);
-      await processTasks(response.data.results);
+      const resultsLength = response.data.results.length;
+      totalCount += resultsLength;
+      console.log(`Got ${resultsLength} tasks from todoist.com. Total: ${totalCount}`);
+     
+      const tasks = response.data.results;
+
+      for (const task of tasks) {
+            const taskChanges = processTask(task);
+            console.log(`Task: ${count++}: ${JSON.stringify(taskChanges)}`);
+            const result = await updateTask(task.id, taskChanges);
+      }
       console.log("Processed response from todoist");
       let cursor = response.data.next_cursor;
       if (!cursor) {
@@ -45,55 +54,8 @@ const fetchTasks = async () => {
   }
 };
 
-const updateTask = async (id: string, data: any) => {
-  const url = 'https://api.todoist.com/rest/v2/tasks/' + id;  // TODO update to the new API
-  const config = {headers: {Authorization: `Bearer ${apiToken}`} };
-  const response = await axios.post(url, data, config);
-  return response;
-}
 
 
-async function processTasks(tasks: any) {
-  let count = 0;
-
-  for (const task of tasks) {
-//    console.log("####### Task: ", task);
-    console.log(`Task: ${count++}: ${task.content}`);
-    const id = task.id;
-    const dueString = task?.due?.string;
-    const dueLabel = task?.due?.string?.replaceAll(" ", "-").replace("every-1-", "every-"); // ?.replace("every", "every-");
-   // const was = {...task};
-    const labels = [... task.labels, "api_v1_take3"];
- //   const newLabels = labels;
-    const newLabels = labels.filter(label => !label.startsWith("every-"));
-
-    if (!task?.due?.is_recurring) {
-      console.log("Task is not recurring: ", task.content);
-      newLabels.push("🔹");
-    }
-
-    else
-      console.log("Task is recurring: ", task.content);
-    if (dueLabel)
-      newLabels.push(dueLabel);
-    else
-      console.log("no due label for task: ", task.content);
-
-    if (task.parent_id === null && task.content.startsWith("⤷ ")) { // TODO: regex for white space
-      console.log("Task is not a subtask, removing ⤷ from content: ", task.content);
-      task.content = task.content.substring(2);
-    }  
-    else if (task.parent_id !== null && !task.content.startsWith("⤷ ")) {
-      console.log("Task is a subtask, adding ⤷ to content: ", task.content);
-      task.content = "⤷ " + task.content;
-    }
-
-  //  if (labels.length !== newLabels.length) {
-      const result = await updateTask(task.id, {labels: newLabels, content: task.content});
-
-      console.log("~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Task modified:", task.content); //, "now: ", result);
- //   }
-  }
 
 //   const jsonString = JSON.stringify(tasks, null, 4);
 //  // console.log('Tasks:', response.data);
@@ -101,6 +63,12 @@ async function processTasks(tasks: any) {
 //   await fs.writeFile('ignoreMe/todoist-tasks.json', jsonString);
 //   console.log('Tasks have been saved to ignoreMe/todoist-tasks.json');
 
+const updateTask = async (id: string, data: any) => {
+  const url = 'https://api.todoist.com/rest/v2/tasks/' + id;  // TODO update to the new API
+  const config = {headers: {Authorization: `Bearer ${apiToken}`} };
+  const response = await axios.post(url, data, config);
+  return response;
 }
+
 
 fetchTasks();
