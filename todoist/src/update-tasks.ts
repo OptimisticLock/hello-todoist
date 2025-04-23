@@ -11,12 +11,14 @@ const apiToken = process.env.TOKEN;
 let totalCount = 0;
 
 const fetchTasks = async (url: string) => {
+  let syncToken;
   try {
     let count = 0;
     console.log("Fetching Tasks from ", url);
     while (true) {
       const response = await axios.get(url, { headers: {Authorization: `Bearer ${apiToken}`} });
       const tasks = response.data.results || response.data.items;
+      syncToken = response.data.sync_token;
       totalCount += tasks.length;
       console.log(`Got ${tasks.length} tasks from todoist.com. Total: ${totalCount}`);
      
@@ -26,7 +28,7 @@ const fetchTasks = async (url: string) => {
             const taskChanges = processTask(task);
             if (Object.keys(taskChanges).length > 0) {
               console.log("~~~~~~~Task modified:", task.content, taskChanges);
-              taskChanges.aaa = "bbb"; // FIXME
+  //            taskChanges.aaa = "bbb"; // FIXME
               console.log("~~~~~~~Was:          ", {content: task.content, labels: task.labels});  
   //            const taskChanges2 = processTask(task); //fixme
               const result = await updateTask(task.id, taskChanges);
@@ -49,13 +51,11 @@ const fetchTasks = async (url: string) => {
  //   console.log("Task updated: " + updateTaskResult);
     //const url = 'https://api.todoist.com/rest/v2/tasks';
 
-    console.log("Done");
-    console.timeEnd("Total Execution Time");
+    return syncToken;
 
   } catch (error) {
-    console.error('###### Error!!! ######');
-    console.error('Error fetching tasks:', error);
-    console.timeEnd("Total Execution Time");
+    console.error('###### Error!!! ######', error);
+    throw error;
   }
 };
 
@@ -76,13 +76,19 @@ const updateTask = async (id: string, data: any) => {
   return response;
 }
 
-const activeURL = 'https://todoist.com/api/v1/tasks';
-console.log("############################################ Fetching active tasks");
-await fetchTasks(activeURL);
+// const activeURL = 'https://todoist.com/api/v1/tasks';
+// console.log("############################################ Fetching active tasks");
+// await fetchTasks(activeURL);
+
+// const activeUrl = 'https://api.todoist.com/api/v1/sync?sync_token=*&resource_types=["all"]';
+// console.log("############################################ Fetching active tasks via sync api");
+// await fetchTasks(activeUrl);
 
 
-// const completedURL = 'https://api.todoist.com/sync/v9/sync?resource_types=["all"]';
-// console.log("############################################### Fetching completed tasks");
-// await fetchTasks(completedURL);
+const completedURL = 'https://api.todoist.com/sync/v9/sync?resource_types=["items"]&sync_token=*';
+console.log("############################################### Fetching completed tasks");
+await fetchTasks(completedURL);
+console.log("Done");
+console.timeEnd("Total Execution Time");
 
 
