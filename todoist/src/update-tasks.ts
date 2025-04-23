@@ -3,7 +3,7 @@ import 'dotenv/config';
 import axios from 'axios';
 
 import { promises as fs } from 'fs';
-import { Task } from './process-task.js';
+import { Task } from './Task.js';
 
 console.log("Hello!");
 console.time("Total Execution Time");
