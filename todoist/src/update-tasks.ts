@@ -69,8 +69,8 @@ const fetchTasks = async (url: string) => {
 //   console.log('Tasks have been saved to ignoreMe/todoist-tasks.json');
 
 const updateTask = async (id: string, data: any) => {
-  //const url = 'https://api.todoist.com/rest/v2/tasks/' + id;  // TODO update to the new API
-  const url = 'https://todoist.com/api/v1/tasks/' + id;  
+  const url = 'https://api.todoist.com/rest/v2/tasks/' + id;  // TODO update to the new API
+  //const url = 'https://todoist.com/api/v1/tasks/' + id;  
   const config = {headers: {Authorization: `Bearer ${apiToken}`} };
   const response = await axios.post(url, data, config);
   return response;
