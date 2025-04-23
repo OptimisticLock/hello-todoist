@@ -1,8 +1,9 @@
 // import {json} from "node:stream/consumers";
 import 'dotenv/config';
 import axios from 'axios';
-import { processTask } from './process-task.js';
+
 import { promises as fs } from 'fs';
+import { Task } from './process-task.js';
 
 console.log("Hello!");
 console.time("Total Execution Time");
@@ -11,6 +12,8 @@ const apiToken = process.env.TOKEN;
 let totalCount = 0;
 
 const fetchTasks = async (url: string) => {
+  // const task = Object.assign(new Task(), raw);
+  const t = new Task();
   let syncToken;
   try {
     let count = 0;
@@ -26,7 +29,7 @@ const fetchTasks = async (url: string) => {
       }
       
       for (const task of tasks) {
-            const taskChanges = processTask(task);
+            const taskChanges = t.processTask(task);
             if (Object.keys(taskChanges).length > 0) {
               console.log("~~~~~~~Task modified:", task.content, taskChanges);
   //            taskChanges.aaa = "bbb"; // FIXME
