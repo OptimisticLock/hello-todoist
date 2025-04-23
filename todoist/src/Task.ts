@@ -1,7 +1,12 @@
 export class Task {
-    private tasks: { [key: string]: any } = {};
-    private queue: any[] = [];
+    private static all: { [key: string]: any } = {};
+    private static queue: any[] = [];
 
+    labels: string[] = [];
+    due: {[key: string]: any} = {};
+    parent_id?: string;
+    indent: number = 0;
+    content: string = "";
 
     private toDueLabel(dueString: string) {
         return dueString
@@ -11,53 +16,53 @@ export class Task {
             ?.replace(/every-month.*/, "every-month🌗")
     }
 
-    public processTask(task: any) {
+    public groom() {
 
         // Remove all labels that start with "every-", "🔹", "🎆" or are due dates
-        let labels = task.labels.filter((label: string) =>
+        let labels = this.labels.filter((label: string) =>
             !label.startsWith("every-")
             && !label.startsWith("🔹")
             && !label.startsWith("🎆")
             && !label.startsWith("➡")
             //    && !/^\d{4}-\d{2}-\d{2}/.test(label)
-            && label !== this.toDueLabel(task.due?.string)
+            && label !== this.toDueLabel(this.due?.string)
         );
 
-        if (task.parent_id) {
-            if (!(task.parent_id in this.tasks))
-                this.queue.push(task);
+        if (this.parent_id) {
+            if (!(this.parent_id in Task.all))
+                Task.queue.push(this); // FIXME static
 
-            task.indent = this.tasks[task.parent_id]?.indent + 1 || 1;
-            const indentLabel = "➡".repeat(task.indent);
+            this.indent = Task.all[this.parent_id]?.indent + 1 || 1;
+            const indentLabel = "➡".repeat(this.indent);
             labels.push(indentLabel);
         }
 
-        if (task.labels.includes("debug")) { // FIXME
+        if (this.labels.includes("debug")) { // FIXME
             console.log("Debug label found in task labels."); // indent 1
             //      task.labels.push("debug" + new Date());
         }
 
-        if (!task.due?.is_recurring)
+        if (!this.due?.is_recurring)
        //     labels.push("🎆"); //("🔹"); 
             labels.push("🎇"); //("🔹"); 
 
-        if (task.due?.is_recurring && task.due?.string) {
-            const dueLabel = this. toDueLabel(task.due?.string);
+        if (this.due?.is_recurring && this.due?.string) {
+            const dueLabel = this. toDueLabel(this.due?.string);
             labels.push(dueLabel);
         }
 
-        let content = task.content;
+        let content = this.content;
 
-        if (task.content.startsWith("CCCDDD"))
-            console.log("^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ ", task.content); // FIXME
+        if (this.content.startsWith("CCCDDD"))
+            console.log("^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ ", this.content); // FIXME
 
-        if (task.parent_id === null && task.content.startsWith("⤷ ")) { // TODO: regex for white space
-            console.log("Task is not a subtask, removing ⤷ from content: ", task.content);
-            content = task.content.substring(2);
+        if (this.parent_id === null && this.content.startsWith("⤷ ")) { // TODO: regex for white space
+            console.log("Task is not a subtask, removing ⤷ from content: ", this.content);
+            content = this.content.substring(2);
         }
-        else if (task.parent_id !== null && !task.content.startsWith("⤷ ")) {
-            console.log("Task is a subtask, adding ⤷ to content: ", task.content);
-            content = "⤷ " + task.content;
+        else if (this.parent_id !== null && !this.content.startsWith("⤷ ")) {
+            console.log("Task is a subtask, adding ⤷ to content: ", this.content);
+            content = "⤷ " + this.content;
         }
 
         const result: {
@@ -66,10 +71,10 @@ export class Task {
             labels?: string[]
         } = {};
 
-        if (task.content !== content)
+        if (this.content !== content)
             result.content = content;
 
-        if (task.labels.sort().join() !== labels.sort().join()) // TODO
+        if (this.labels.sort().join() !== labels.sort().join()) // TODO
             result.labels = labels;
 
         return result;
