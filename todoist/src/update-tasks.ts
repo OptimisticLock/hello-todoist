@@ -17,13 +17,14 @@ const fetchTasks = async (url: string) => {
     console.log("Fetching Tasks from ", url);
     while (true) {
       const response = await axios.get(url, { headers: {Authorization: `Bearer ${apiToken}`} });
-      const tasks = response.data.results || response.data.items;
+      let tasks = response.data.results || response.data.items;
       syncToken = response.data.sync_token;
       totalCount += tasks.length;
       console.log(`Got ${tasks.length} tasks from todoist.com. Total: ${totalCount}`);
-     
-
-
+      
+      for (const task of tasks) {
+      }
+      
       for (const task of tasks) {
             const taskChanges = processTask(task);
             if (Object.keys(taskChanges).length > 0) {
@@ -87,8 +88,8 @@ const updateTask = async (id: string, data: any) => {
 
 const completedURL = 'https://api.todoist.com/sync/v9/sync?resource_types=["items"]&sync_token=*';
 console.log("############################################### Fetching completed tasks");
-await fetchTasks(completedURL);
-console.log("Done");
+const syncToken = await fetchTasks(completedURL);
+console.log("Done. Sync token: ", syncToken);
 console.timeEnd("Total Execution Time");
 
 

@@ -1,4 +1,6 @@
 const tasks: { [key: string]: any } = {};
+const queue = [];
+
 
 function toDueLabel(dueString: string) {
     return dueString
@@ -7,11 +9,12 @@ function toDueLabel(dueString: string) {
         ?.replace(/every-day.*/, "every-day🌞")
         ?.replace(/every-month.*/, "every-month🌗") 
 }
+
+
+
+
     
 export function processTask(task: any) {
-    //task = {...task}; 
-    tasks[task.id] = task;
-
 
     // Remove all labels that start with "every-", "🔹", "🎆" or are due dates
     let labels = task.labels.filter((label: string) => 
@@ -24,13 +27,18 @@ export function processTask(task: any) {
     );
 
     if (task.parent_id) {
+        if (!(task.parent_id in tasks)) 
+          queue.push(task);
+        
+        
+
         task.indent = tasks[task.parent_id]?.indent + 1 || 1; 
         const indentLabel = "➡".repeat(task.indent);
         labels.push(indentLabel);
     }
 
     if (task.labels.includes("debug")) { // FIXME
-        console.log("Debug label found in task labels.");
+        console.log("Debug label found in task labels."); // indent 1
   //      task.labels.push("debug" + new Date());
     }
 
