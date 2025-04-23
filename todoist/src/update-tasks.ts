@@ -26,8 +26,9 @@ const fetchTasks = async (url: string) => {
             const taskChanges = processTask(task);
             if (Object.keys(taskChanges).length > 0) {
               console.log("~~~~~~~Task modified:", task.content, taskChanges);
+              taskChanges.aaa = "bbb"; // FIXME
               console.log("~~~~~~~Was:          ", {content: task.content, labels: task.labels});  
-              const taskChanges2 = processTask(task); //fixme
+  //            const taskChanges2 = processTask(task); //fixme
               const result = await updateTask(task.id, taskChanges);
 
             }
@@ -79,8 +80,9 @@ const activeURL = 'https://todoist.com/api/v1/tasks';
 console.log("############################################ Fetching active tasks");
 await fetchTasks(activeURL);
 
-const completedURL = 'https://todoist.com/api/v1/tasks/completed'
-console.log("############################################### Fetching completed tasks");
-await fetchTasks(completedURL);
+
+// const completedURL = 'https://api.todoist.com/sync/v9/sync?resource_types=["all"]';
+// console.log("############################################### Fetching completed tasks");
+// await fetchTasks(completedURL);
 
 
