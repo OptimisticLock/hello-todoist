@@ -24,8 +24,8 @@ const fetchTasks = async (url: string) => {
       totalCount += tasks.length;
       console.log(`Got ${tasks.length} tasks from todoist.com. Total: ${totalCount}`);
 
-      for (const task of tasks) {
-      }
+      // TODO: this assumes that all tasks were fetched and disregards the cursor logic. Which is in line with the new sync api.
+      Task.initialize(tasks); 
 
       for (const t of tasks) {
         const task = Object.assign(new Task(), t);

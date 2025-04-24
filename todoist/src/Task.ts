@@ -1,12 +1,39 @@
 export class Task {
     private static all: { [key: string]: any } = {};
-    private static queue: any[] = [];
 
+    id: string = "";
     labels: string[] = [];
     due: {[key: string]: any} = {};
     parent_id?: string;
-    indent: number = 0;
+    nestingLevel: number = 0;
     content: string = "";
+
+
+    // This is not a getter, because some mutation is going on for memoization purposes
+    private calculateNestingLevel(): number {
+
+        if (!this.parent_id) 
+            return 0;
+
+        if (this.nestingLevel) 
+            return this.nestingLevel;
+          
+        const parent = Task.all[this.parent_id];
+
+        if (!parent) 
+            throw new Error(`Parent task not found for task ${this.id} with parent_id ${this.parent_id}: ${this.content}`);
+        
+        this.nestingLevel = parent.calculateNestingLevel() + 1;
+        return this.nestingLevel;
+    }
+        
+    // TODO This is easy to miss. Refactor.
+    public static initialize (tasks: Task[]): void {
+        Task.all = {};
+
+        for (const task of tasks) 
+            Task.all[task.id] = Object.assign(new Task(), task);               
+    }
 
     private toDueLabel(dueString: string) {
         return dueString
@@ -24,17 +51,16 @@ export class Task {
             && !label.startsWith("🔹")
             && !label.startsWith("🎆")
             && !label.startsWith("➡")
+            && !label.startsWith("🎇") 
             //    && !/^\d{4}-\d{2}-\d{2}/.test(label)
             && label !== this.toDueLabel(this.due?.string)
         );
 
-        if (this.parent_id) {
-            if (!(this.parent_id in Task.all))
-                Task.queue.push(this); // FIXME static
 
-            this.indent = Task.all[this.parent_id]?.indent + 1 || 1;
-            const indentLabel = "➡".repeat(this.indent);
-            labels.push(indentLabel);
+        const nestingLevel = this.calculateNestingLevel();
+        if (nestingLevel) {
+            const nestingLabel = "➡".repeat(nestingLevel);
+            labels.push(nestingLabel);
         }
 
         if (this.labels.includes("debug")) { // FIXME
